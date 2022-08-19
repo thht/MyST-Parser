@@ -588,13 +588,13 @@ def test_included_external_links(
         get_sphinx_app_doctree(
             app,
             docname="index",
-            regress=True,
+            regress=False,
         )
     finally:
         output = get_sphinx_app_output(
             app,
             filename="index.html",
-            regress_html=True,
+            regress_html=False,
             replace={},
         )
 
