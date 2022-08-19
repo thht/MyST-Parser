@@ -599,4 +599,5 @@ def test_included_external_links(
         )
 
         assert 'href="https://local_example.com"' in output
+        assert "I am an included Paragraph" in output
         assert 'href="https://included_example.com"' in output
