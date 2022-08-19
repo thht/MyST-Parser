@@ -563,3 +563,48 @@ def test_texinfo_table(
     assert "build succeeded" in status.getvalue()  # Build succeeded
     warnings = warning.getvalue().strip()
     assert warnings == ""
+
+
+@pytest.mark.sphinx(
+    buildername="html",
+    srcdir=os.path.join(SOURCE_DIR, "include_external_links"),
+    freshenv=True,
+)
+def test_included_external_links(
+    app,
+    status,
+    warning,
+    get_sphinx_app_doctree,
+    get_sphinx_app_output,
+):
+    """Test of included external link directive."""
+    app.build()
+
+    assert "build succeeded" in status.getvalue()  # Build succeeded
+    warnings = warning.getvalue().strip()
+    assert warnings == ""
+
+    try:
+        get_sphinx_app_doctree(
+            app,
+            docname="index",
+            regress=True,
+            # fix for Windows CI
+            replace={
+                r"subfolder\example2.jpg": "subfolder/example2.jpg",
+                r"subfolder\\example2.jpg": "subfolder/example2.jpg",
+                r"subfolder\\\\example2.jpg": "subfolder/example2.jpg",
+            },
+        )
+    finally:
+        get_sphinx_app_output(
+            app,
+            filename="index.html",
+            regress_html=True,
+            replace={
+                "Permalink to this headline": "Permalink to this heading",
+                r"'subfolder\\example2'": "'subfolder/example2'",
+                r'uri="subfolder\\example2"': 'uri="subfolder/example2"',
+                "_images/example21.jpg": "_images/example2.jpg",
+            },
+        )
