@@ -589,22 +589,14 @@ def test_included_external_links(
             app,
             docname="index",
             regress=True,
-            # fix for Windows CI
-            replace={
-                r"subfolder\example2.jpg": "subfolder/example2.jpg",
-                r"subfolder\\example2.jpg": "subfolder/example2.jpg",
-                r"subfolder\\\\example2.jpg": "subfolder/example2.jpg",
-            },
         )
     finally:
-        get_sphinx_app_output(
+        output = get_sphinx_app_output(
             app,
             filename="index.html",
             regress_html=True,
-            replace={
-                "Permalink to this headline": "Permalink to this heading",
-                r"'subfolder\\example2'": "'subfolder/example2'",
-                r'uri="subfolder\\example2"': 'uri="subfolder/example2"',
-                "_images/example21.jpg": "_images/example2.jpg",
-            },
+            replace={},
         )
+
+        assert 'href="https://local_example.com"' in output
+        assert 'href="https://included_example.com"' in output
